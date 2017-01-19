@@ -65,6 +65,13 @@ class BloxorzSuite extends FunSuite {
     }
   }
 
+
+  test("test bfs") {
+    new Level1 {
+      println((from(Stream((startBlock,List())),Set(startBlock)) take 10).toList.toString)
+    }
+  }
+
   test("test if neighbors do not contain loops") {
     new Level1 {
       assert(newNeighborsOnly(
@@ -96,7 +103,6 @@ class BloxorzSuite extends FunSuite {
       assert(startPos == Pos(1,1))
     }
   }
-
 
 	test("optimal solution for level 1") {
     new Level1 {
