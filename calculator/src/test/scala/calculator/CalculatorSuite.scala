@@ -51,4 +51,26 @@ class CalculatorSuite extends FunSuite with ShouldMatchers {
     assert(resultRed2() == "red")
   }
 
+  test("delta x^2 + 4x + 4") {
+    (Polynomial.computeDelta(Signal(1d),Signal(4d),Signal(4d))()) should equal (0d)
+  }
+
+  test("roots x^2 + 4x + 4") {
+    val (a,b,c) = (Signal(1d),Signal(4d),Signal(4d))
+
+    val delta = Polynomial.computeDelta(a,b,c)
+
+    println(Polynomial.computeSolutions(a,b,c,delta)())
+    (Polynomial.computeSolutions(a,b,c,delta)()) should equal (Set(-2d))
+  }
+
+  test("roots x^2 - 4") {
+    val (a,b,c) = (Signal(1d),Signal(0d),Signal(-4d))
+
+    val delta = Polynomial.computeDelta(a,b,c)
+
+    println(Polynomial.computeSolutions(a,b,c,delta)())
+    (Polynomial.computeSolutions(a,b,c,delta)()) should equal (Set(-2d,2d))
+  }
+
 }
