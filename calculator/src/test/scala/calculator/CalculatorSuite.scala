@@ -51,6 +51,22 @@ class CalculatorSuite extends FunSuite with ShouldMatchers {
     assert(resultRed2() == "red")
   }
 
+  test("colorForRemainingCharsCount with a signal") {
+    val a = Var(52)
+    val resultGreen = TweetLength.colorForRemainingCharsCount(a)
+    assert(resultGreen() == "green")
+
+    val remaining = a()
+    a() = remaining - 50
+
+    assert(resultGreen() == "orange")
+
+    val remaining2 = a()
+    a() = remaining2 - 5
+
+    assert(resultGreen() == "red")
+  }
+
   test("delta x^2 + 4x + 4") {
     (Polynomial.computeDelta(Signal(1d),Signal(4d),Signal(4d))()) should equal (0d)
   }
@@ -71,6 +87,39 @@ class CalculatorSuite extends FunSuite with ShouldMatchers {
 
     println(Polynomial.computeSolutions(a,b,c,delta)())
     (Polynomial.computeSolutions(a,b,c,delta)()) should equal (Set(-2d,2d))
+  }
+
+  test("coefficients change") {
+    val (a,b,c) = (Var(1d),Var(4d),Var(4d))
+
+    val delta = Polynomial.computeDelta(a,b,c)
+
+    println(Polynomial.computeSolutions(a,b,c,delta)())
+    (Polynomial.computeSolutions(a,b,c,delta)()) should equal (Set(-2d))
+
+    b() = 0d
+    c() = -4d
+    (Polynomial.computeSolutions(a,b,c,delta)()) should equal (Set(-2d,2d))
+  }
+
+  test("a = 2, a + 3 = 5 with eval") {
+    val references: Map[String,Signal[Expr]] = Map("a" -> Signal(Literal(2d)))
+
+    Calculator.eval(Plus(Ref("a"),Literal(3d)),references) should equal (5d)
+  }
+
+  test("a = 2, b = 2 + a with computeValues") {
+    val references: Map[String,Signal[Expr]]
+      = Map("a" -> Signal(Literal(2d)), "b" -> Signal(Plus(Ref("a"),Literal(3d))))
+
+    Calculator.computeValues(references)("b")() should equal (5d)
+  }
+
+  test("computeValues updating expression") {
+    val references: Map[String,Signal[Expr]]
+    = Map("a" -> Signal(Literal(2d)), "b" -> Signal(Plus(Ref("a"),Literal(3d))))
+
+    Calculator.computeValues(references + ("a" -> Signal(Literal(3d))))("b")() should equal (6d)
   }
 
 }
