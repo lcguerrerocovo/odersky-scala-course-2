@@ -122,4 +122,18 @@ class CalculatorSuite extends FunSuite with ShouldMatchers {
     Calculator.computeValues(references + ("a" -> Signal(Literal(3d))))("b")() should equal (6d)
   }
 
+  test("check if an expression is cyclic") {
+    val references: Map[String,Signal[Expr]]
+    = Map("a" -> Signal(Ref("b")), "b" -> Signal(Plus(Ref("a"),Literal(3d))))
+
+    Calculator.checkIfCyclic("b",references) should equal (true)
+  }
+
+  test("computeValues no cycles") {
+    val references: Map[String,Signal[Expr]]
+    = Map("a" -> Signal(Ref("b")), "b" -> Signal(Plus(Ref("a"),Literal(3d))))
+
+    assert(Calculator.computeValues(references)("b")() equals Double.NaN)
+  }
+
 }
